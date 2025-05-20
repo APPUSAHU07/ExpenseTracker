@@ -1,0 +1,8 @@
+package com.expenseTrackerProj;
+
+public enum TranscationType {
+
+	
+	INCOME,
+	EXPENSE
+}

@@ -1,0 +1,65 @@
+package com.expenseTrackerProj;
+
+import java.time.LocalDate;
+
+public class Transaction {
+	
+	private TranscationType type;
+	private Category category;
+	private double amount;
+	private LocalDate date;
+	
+	
+	public Transcation(TranscationType type, Category category, double amount, LocalDate date) {
+		super();
+		this.type = type;
+		this.category = category;
+		this.amount = amount;
+		this.date = date;
+	}
+
+
+	
+	//Getters
+	
+	public TranscationType getType() {
+		return type;
+	}
+
+
+	public Category getCategory() {
+		return category;
+	}
+
+
+	public double getAmount() {
+		return amount;
+	}
+
+
+	public LocalDate getDate() {
+		return date;
+	}
+
+
+
+	@Override
+	public String toString() {
+		return "Type=" + type + " ||  category=" + category + "  ||  amount=" + amount + "  ||  date=" + date;
+	}
+	
+	public static Transaction fromString(String line) {
+		
+		String[] parts = line.split(" || ");
+		
+		return new Transcation (
+				TranscationType.valueOf(parts[0].trim()),
+				Category.valueOf(parts[1].trim()),
+				Double.parseDouble(parts[2].trim()),
+				LocalDate.parse(parts[3].trim())
+				);
+	}
+	
+	
+
+}

@@ -1,0 +1,172 @@
+package com.expenseTrackerProj;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class ExpenseTracker {
+	
+	private static List<Transaction> transactions = new ArrayList<>();
+	
+	private static final Scanner scanner = new Scanner(System.in);
+	
+
+	public static void main(String[] args) {
+		
+		while(true) {
+			System.out.println("\n---- Expense Tracker Menu ----");
+			System.out.println("1. Add Transaction");
+			System.out.println("2. Load Transactions from File");
+			System.out.println("3. Save Transactions to File");
+			System.out.println("4. View Monthly Summary");
+			System.out.println("5. Exit");
+			
+			System.out.println("Choose an option : ");
+	
+			
+			String input = scanner.nextLine();
+			
+			switch(input) {
+			
+			case "1" -> addTransaction();
+			case "2" -> loadFromFile();
+			case "3" -> saveToFile();
+			case "4" -> viewMonthlySummary();
+			case "5" -> {
+				System.out.println("Exiting. Bye!");
+				return;
+			}
+			default -> System.out.println("Invalid choice. Try again. ");
+			}
+		}
+	}
+	
+	private static void addTransaction() {
+		try {
+			System.out.println("Enter type (INCOME/EXPENSE) :");
+			TransactionType type = TransactionType.valueOf(scanner.nextLine().trim().toUpperCase());
+			
+			System.out.println("Select category: ");
+			for(Category cat : Category.values()) {
+				if((type == TransactionType.INCOME && (cat == Category.SALARY || cat == Category.BUSINESS))
+						||
+						(type == TransactionType.EXPENSE && (cat == Category.FOOD || cat == Category.RENT || cat == Category.TRAVEL)))
+				{
+					System.out.println("- "+cat);
+				}
+			
+			}
+			
+			System.out.println("Enter Category :");
+			Category category = Category.valueOf(scanner.nextLine().trim().toUpperCase());
+			
+			double amount;
+			while(true) {
+				System.out.println("Enter amount :");
+				try {
+					amount = Double.parseDouble(scanner.nextLine().trim());
+					
+					if(amount <= 0) {
+						System.out.println("Amount must be grater than zero.");
+					}else {
+						break;
+					}
+				}catch(NumberFormatException e) {
+			        System.out.println("Invalid amount. Please enter a valid number.");
+				}
+			}
+			
+			System.out.println("Enter date (YYYY-MM-DD) ");
+			LocalDate date = LocalDate.parse(scanner.nextLine().trim());
+			
+			transactions.add(new Transaction(type,category,amount,date));
+			System.out.println("Transaction added successfully");
+		}
+		catch(Exception e) {
+			System.out.println("Error: Invalid input.Please try again.");
+		}
+	}
+	
+	private static void loadFromFile() {
+		System.out.println("Enter file name to load: ");
+		String filename = scanner.nextLine();
+		
+		try(BufferedReader br = new BufferedReader(new FileReader(filename))){
+			
+			String line;
+			int count = 0;
+			
+			while((line = br.readLine())!= null) {
+				try {
+					transactions.add(Transaction.fromString(line));
+					count++;
+				}catch(Exception e) { }
+			}
+			
+			System.out.println(count +" Transcation Loaded.");
+		} catch (IOException e) {
+			
+			System.out.println("Error loading file.");
+		}
+	}
+	
+	private static void saveToFile() {
+		System.out.println("Enter file name to save :");
+		String filename = scanner.nextLine();
+		
+		if (transactions.isEmpty()) {
+		    System.out.println("No transactions to save.");
+		    return;
+		}
+
+		
+		try(BufferedWriter bw = new BufferedWriter(new FileWriter(filename))){
+			
+			for(Transaction t: transactions) {
+				bw.write(t.toString());
+				bw.newLine();
+			}
+			System.out.println("Transactions saved to "+filename);
+		} catch (IOException e) {
+			System.out.println("Error saving file.");
+		}
+	}
+	
+	
+	private static void viewMonthlySummary() {
+		
+		if (transactions.isEmpty()) {
+		    System.out.println("No transactions found. Please add or load transactions first.");
+		    return;
+		}
+		System.out.println("Enter month (e.g., 2025-05) :");
+		try {
+			YearMonth ym = YearMonth.parse(scanner.nextLine().trim());
+			double income = 0;
+			double expense = 0;
+			
+			for(Transaction t : transactions) {
+				if(YearMonth.from(t.getDate()).equals(ym)) {
+					if(t.getType() == TransactionType.INCOME) income += t.getAmount();
+					
+					else expense += t.getAmount();
+				}
+			}
+			System.out.println("Summary for "+ym+" : ");
+			System.out.println("Total Income : ₹"+income);
+			System.out.println("Total Expense : ₹"+expense);
+			System.out.println("Net Savings : ₹"+(income - expense));
+
+		}catch(Exception e) {
+			System.out.println("Invalid format. Please enter YYYY-MM.");
+		}
+	}
+
+}
