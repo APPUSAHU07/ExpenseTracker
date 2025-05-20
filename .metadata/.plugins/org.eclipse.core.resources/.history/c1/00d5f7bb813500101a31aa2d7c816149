@@ -52,25 +52,16 @@ public class Transaction {
 	}
 	
 	public static Transaction fromString(String line) {
-	    try {
-	        String[] parts = line.split("\\|\\|");
-
-	        String typePart = parts[0].split("=")[1].trim();
-	        String categoryPart = parts[1].split("=")[1].trim();
-	        String amountPart = parts[2].split("=")[1].trim();
-	        String datePart = parts[3].split("=")[1].trim();
-
-	        return new Transaction(
-	            TransactionType.valueOf(typePart),
-	            Category.valueOf(categoryPart),
-	            Double.parseDouble(amountPart),
-	            LocalDate.parse(datePart, DateTimeFormatter.ofPattern("dd-MM-yyyy"))
-	        );
-	    } catch (Exception e) {
-	        throw new IllegalArgumentException("Invalid line format: " + line);
-	    }
+		
+		String[] parts = line.split(" || ");
+		
+		return new Transaction (
+				TransactionType.valueOf(parts[0].trim()),
+				Category.valueOf(parts[1].trim()),
+				Double.parseDouble(parts[2].trim()),
+				LocalDate.parse(parts[3].trim())
+				);
 	}
-
 	
 	
 

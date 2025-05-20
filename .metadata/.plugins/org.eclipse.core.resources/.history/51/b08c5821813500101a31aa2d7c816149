@@ -18,8 +18,7 @@ public class ExpenseTracker {
 	private static List<Transaction> transactions = new ArrayList<>();
 	
 	private static final Scanner scanner = new Scanner(System.in);
-	private static final DateTimeFormatter INDIAN_DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
+	
 
 	public static void main(String[] args) {
 		
@@ -106,16 +105,18 @@ public class ExpenseTracker {
 				}
 			}
 			
-			System.out.println("Enter date (DD-MM-YYYY): ");
+			System.out.println("Enter date (YYYY-MM-DD) ");
 			LocalDate date;
-			while(true) {
-			    try {
-			        date = LocalDate.parse(scanner.nextLine().trim(), INDIAN_DATE_FORMAT);
-			        break;
-			    } catch(Exception e) {
-			        System.out.println("Invalid date format. Please enter date in DD-MM-YYYY format:");
-			    }
-			}
+					
+				while(true) {
+					try {
+						date = LocalDate.parse(scanner.nextLine().trim());
+						break;
+					}catch(Exception e) {
+						System.out.println("Invalid date format. Please enter date in YYYY-MM-DD format :");
+					}
+				}
+			
 			transactions.add(new Transaction(type,category,amount,date));
 			System.out.println("Transaction added successfully");
 		}

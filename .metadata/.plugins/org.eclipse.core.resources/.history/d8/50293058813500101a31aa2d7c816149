@@ -76,7 +76,6 @@ public class ExpenseTracker {
 				boolean valid = (type == TransactionType.INCOME && (category == Category.SALARY || category == Category.BUSINESS)) ||
 						(type == TransactionType.EXPENSE && (category == Category.FOOD || category == Category.RENT || category == Category.TRAVEL));
 				
-				if(!valid) {
 					System.out.println("Invalid category for "+type+". Please choose again.");
 					continue;
 				}
@@ -116,6 +115,7 @@ public class ExpenseTracker {
 			        System.out.println("Invalid date format. Please enter date in DD-MM-YYYY format:");
 			    }
 			}
+
 			transactions.add(new Transaction(type,category,amount,date));
 			System.out.println("Transaction added successfully");
 		}
